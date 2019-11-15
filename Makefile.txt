@@ -1,0 +1,11 @@
+CC = gcc
+CFLAG = -Wall
+DEPS = flashcard.h
+OBJ = main.o flashcard.o
+
+main
+FlashCard.exe: $(OBJ)
+    g++ -o FlashCard.exe main.o flashcard.h flashcard.o
+
+main.o: main.cpp flashcard.h
+    g++  -c main.cpp flashcard.h  
