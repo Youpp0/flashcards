@@ -6,7 +6,21 @@
 #include "flashcard.h"
 #include "cardFunctions.h"
 
+void printBanner(){
+    string program_Name = "Pedro's Flash Cards";
 
+    for (int i =0; i < program_Name.length()+2; i++){
+        cout << "*";
+    }
+
+    cout << "\n*" << program_Name << "*\n";
+     
+    for (int i =0; i < program_Name.length()+2; i++){
+        cout << "*";
+    }
+}
+
+//a random number is generated so that the card pulled from the deck is random
 int gen_Ran_Num (int size){
 
     int ranNum;
@@ -97,7 +111,13 @@ bool game_loop (FlashCard*& card, int target){
 
 
 
-    return play_again();
+    if(play_again()){
+        return true;
+    }
+    else{
+        deleteDeck(card);
+        return false;
+    }
 
 
 }
@@ -109,6 +129,13 @@ bool play_again(){
 
     if (answer == 'y')
         return true;
-    else 
+    else {
         return false;
+    }
+}
+//used to releash memory after the user is done
+void deleteDeck(FlashCard*& card){
+
+    delete[] card;
+
 }

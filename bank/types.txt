@@ -1,0 +1,6 @@
+fire
+grass
+psychic
+ghost/bug
+fire
+water

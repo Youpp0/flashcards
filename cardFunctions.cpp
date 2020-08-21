@@ -2,17 +2,23 @@
 #include <fstream>
 #include "flashcard.h"
 #include "cardFunctions.h"
+/*
+In here most of the fun stuff is handled. Card creation, file checking, and the menu 
 
+*/
 using namespace std;
-
+//the menu is handled with a switch statement. Each choice calls the fucntion to load a deck with the 2 premade decks hard coded and the option for custom calling its own method
 int menu(int choice, FlashCard*& bank){
     int size;
    switch(choice){
         case 1:
-                size =loadHiragana(bank);
+                size =loadDeck(bank,"hiragana.txt","h_definitions.txt");
                 break;
-        case 3: 
-                size = loadKanji(bank);
+        case 2: 
+                size = loadDeck(bank,"katakana.txt","kata_definitions.txt");
+                break;
+        case 3:
+                size = customDeck(bank);
                 break;
         default:
                 cout << "goodbye\n"; 
@@ -24,26 +30,12 @@ int menu(int choice, FlashCard*& bank){
     return size;
 }
 
-void printBanner(){
-    string program_Name = "Pedro's Flash Cards";
-
-    for (int i =0; i < program_Name.length()+2; i++){
-        cout << "*";
-    }
-
-    cout << "\n*" << program_Name << "*\n";
-     
-    for (int i =0; i < program_Name.length()+2; i++){
-        cout << "*";
-    }
-}
-
 int displayMenu(){
     int menu_Choice=1;
 
     cout << "\nPlease choose an option\n";
 
-    printf("1. Hiragana \n2. Katakana \n3. Kanji \n4. Custom Set\n");
+    printf("1. Hiragana \n2. Katakana \n3. Custom\n");
 
     cin >> menu_Choice;
 
@@ -51,6 +43,7 @@ int displayMenu(){
 
 }
 
+//this opens the file and checks that it exists sending the error to output if it cannot find the file
 ifstream openFile(string fileName){
     ifstream finput;
     ofstream error_Log;
@@ -77,88 +70,53 @@ ifstream openFile(string fileName){
 
 }
 
-int loadKanji(FlashCard*& bank){
- ifstream Kanji;
-        Kanji.open("bank/Kanji.txt");
-        
+//This calls the openfile for both the question file and the answer file then creates a flashcard obj for each pair putting them in an array
+int loadDeck(FlashCard*& bank, string qList, string aList){
+    ifstream qDeck = openFile(qList);
+    ifstream aDeck = openFile(aList);
 
-        ifstream definitions;
-        definitions.open("bank/k_definitions.txt");
-        
-        int size=0;
-        string Kanji_temp;
-        string definition_temp;
-        
-        
-        while(Kanji >> Kanji_temp) {
-           size++;
-        
-        }
-        
-        
-        Kanji.seekg(0, ios::beg);
-        bank = new FlashCard[size];
-        for(int i =0; i < size; i++){
-            printf("Loading Kanji %i out of %i\n", i+1, size);
-            Kanji >> Kanji_temp;
-            
-            printf("Loading definition %i out of %i\n", i+1, size);
-             definitions >>  definition_temp;
-            
-            FlashCard tempCard(Kanji_temp,definition_temp);
-            bank[i] = tempCard;
-        }
-        Kanji.close();
-        definitions.close();
-        return size;
+    int size =0;
+    string qTemp;
+    string aTemp;
+    //a loop is ran to determing the amount of cards will need to be created. One loop since i'm the questions will all have an answer so itll be equal in size.
+    while(qDeck >> qTemp){
+        size++;
+    }
+    //putting the reader pointer at the top of the file for later
+    qDeck.clear();
+    qDeck.seekg(0,ios::beg);
+
+    bank = new FlashCard[size];
+
+    for(int i =0; i <size; i++){
+        //going through each file putting them into temp variables
+        qDeck >> qTemp;
+        aDeck >> aTemp;
+
+        cout <<"\nGenerating card " << i+1 << " out of " << size << endl;
+        FlashCard newCard(qTemp,aTemp);
+        bank[i] = newCard;
+    }
+
+    return size;
 
 }
 
-int loadHiragana(FlashCard*& bank){
-        string word_Bank = "hiragana.txt";
-        string def_Bank = "h_definitions.txt";
-        
-        ifstream hiragana = openFile(word_Bank);
-        //hiragana.open("bank/hiragana.txt");
+//for custom decks user input is needed for the file names. after input is obtained it calls loadDeck with the filenames in hand
+int customDeck(FlashCard*& bank){
+    string qList = "";
+    string aList = "";
 
-        
+    cout <<"Please enter in the file name, with extension, of the file containing your problem bank\n";
+    cin >> qList;
+    cout << "Please enter in the file name, with extension, of the file containing your answer bank\n";
+    cin >> aList;
+    
+    return loadDeck(bank, qList, aList);
 
-        ifstream definitions = openFile(def_Bank);
-       // definitions.open("bank/h_definitions.txt");
-        
-        int size=0;
-        string hiragana_temp;
-        string definition_temp;
-        
-        
-        while(hiragana >> hiragana_temp) {
-           size++;
-           
-        
-        }
-        hiragana.clear();
-        hiragana.seekg(0, ios::beg);
-        
-        
-        
-        bank = new FlashCard[size];
-        for(int i =0; i < size; i++){
-           // printf("Loading hiragana %i out of %i\n", i+1, size);
-            hiragana >> hiragana_temp;
-            
-           // printf("Loading definition %i out of %i\n", i+1, size);
-            definitions >>  definition_temp;
+}
 
-            cout << "\nGenerating flash card " << i+1 << " out of " << size << endl;
-            FlashCard tempCard(hiragana_temp,definition_temp);
-            bank[i] = tempCard;
-        }
-        hiragana.close();
-        definitions.close();
-        return size;
-        
-    }
-
+//outputs all the cards contents for testing whether they get made properly
 void testCards (FlashCard*& bank,int size){
     cout << "made it to test cards. size is: " << size << endl;
 
