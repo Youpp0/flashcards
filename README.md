@@ -3,7 +3,7 @@ This is a simple flash card program made in C++. The original concept was to mak
 
 
 # Adding Custom Decks 
-You will need to make 2 .txt files one that contains the questions/problems/words and the other containing the answers, and place them in the bank folder
-They must match up in placement i.e. the answer to question 1 must be answer 1. Putting them on seperate lines helps when making these lists.
-Make sure to include the extension when inputting file name.
+You will need to make two .txt files one that contains the questions/problems/words and the other containing the answers, and place them in the bank folder
+They must match up in placement i.e. the answer to the first question listed must match the first answer listed. Putting them on seperate lines helps when making these lists.
+
 
